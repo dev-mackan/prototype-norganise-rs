@@ -12,6 +12,8 @@ use ratatui::{
 };
 mod app;
 
+pub const APP_VERSION: usize = 1;
+
 fn main() -> Result<()> {
     install_panic_hook();
     let mut terminal = init_terminal()?;
