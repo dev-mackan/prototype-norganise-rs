@@ -1,4 +1,3 @@
-mod input_cursor;
 mod note_list;
 mod popups;
 mod styles;
