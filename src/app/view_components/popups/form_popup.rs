@@ -72,6 +72,13 @@ impl Popup {
         self.state.form.replace_field_content(field, content);
         self.move_to_end()
     }
+    pub fn cursors_to_end(&mut self) {
+        for i in 0..self.state.form.field_count() {
+            self.state.selected_field = i;
+            self.move_to_end();
+        }
+        self.state.selected_field = 0;
+    }
 }
 
 impl InputCursor for Popup {

@@ -106,8 +106,10 @@ pub fn update<B: NoteBackend>(
                         return None;
                     }
                 }
-                _ => panic!("popup not implemented"),
             };
+            if let Some(popup) = model.views.popup.as_mut() {
+                popup.cursors_to_end();
+            }
             return Some(msg);
         }
         Message::ClosePopup => {
