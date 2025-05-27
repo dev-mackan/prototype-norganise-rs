@@ -63,6 +63,9 @@ impl InteractiveList for SelectionPopup {
     }
 }
 
+const ITEM_HEIGHT: u16 = 2;
+const WIDTH_PADDING: u16 = 5;
+
 impl<'a> RenderableComponent<'a> for SelectionPopup {
     type ContextData = &'a str;
     fn render(
@@ -72,14 +75,11 @@ impl<'a> RenderableComponent<'a> for SelectionPopup {
         context: Option<RenderContext<'a, Self::ContextData>>,
     ) {
         let buf = frame.buffer_mut();
-        let max_height = area.height / 2;
-        let width_padding = 5;
+
+        let max_height: u16 = (area.height / 2) * ITEM_HEIGHT;
+        let max_width: u16 = (area.width / 2).saturating_sub(WIDTH_PADDING);
         let mut height: u16 = max_height;
-        let max_width: u16 = (area.width / 2).saturating_sub(width_padding);
         let width = area.width / 3;
-        if self.items.len() < max_height as usize {
-            height = self.items.len() as u16
-        }
         let items: Vec<ListItem> = self
             .items
             .iter()
@@ -90,7 +90,7 @@ impl<'a> RenderableComponent<'a> for SelectionPopup {
                 } else {
                     (tag.to_owned(), Modifier::empty())
                 };
-                tag_string = if tag_string.len() > max_width.saturating_sub(width_padding) as usize
+                tag_string = if tag_string.len() > max_width.saturating_sub(WIDTH_PADDING) as usize
                 {
                     let mut truncated = String::with_capacity(max_width as usize - 5);
                     let mut current = 0;
@@ -131,7 +131,15 @@ impl<'a> RenderableComponent<'a> for SelectionPopup {
             self.selected_indices.len(),
             items.len()
         ));
-        let popup_area = popup_area_length(area, width, height);
+
+        height = if items.len() <= 1 {
+            ITEM_HEIGHT
+        } else if items.len() < max_height as usize {
+            items.len() as u16
+        } else {
+            max_height as u16
+        };
+        let popup_area = popup_area_length(area, width, height * ITEM_HEIGHT);
         Widget::render(Clear, popup_area, buf);
 
         let list = List::new(items)
