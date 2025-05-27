@@ -1,7 +1,7 @@
 use super::{
     editor::{NvimEditor, TextEditor},
     event_handling::InputMode,
-    forms::{Form, FormType},
+    forms::Form,
     model_helpers::*,
     note_store::NoteStore,
     searching::fzf_search,
@@ -21,7 +21,6 @@ pub struct Model<N: NoteBackend = JsonBackend> {
     pub running_state: RunningState,
     pub input_mode: InputMode,
     pub views: ViewComponents,
-    pub form: Option<FormType>,
     pub note_store: NoteStore,
     backend: N,
 }
@@ -34,7 +33,6 @@ impl<B: NoteBackend> Model<B> {
             input_mode: InputMode::Navigating,
             backend: note_backend,
             views: ViewComponents::default(),
-            form: None,
             note_store: NoteStore::new(notes),
         })
     }
@@ -207,7 +205,6 @@ pub fn update<B: NoteBackend>(
             }
         }
         Message::CleanState => {
-            model.form = None;
             model.input_mode = InputMode::Navigating;
             model.note_store.remove_filter();
             model.views.note_list.reset_selection();

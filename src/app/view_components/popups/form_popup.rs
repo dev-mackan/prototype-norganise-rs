@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use ratatui::layout::{Constraint, Direction, Layout, Position, Rect};
 use ratatui::style::{Style, Stylize};
 use ratatui::text::Span;
@@ -159,13 +161,9 @@ impl SelectionPopupFields for Popup {
 }
 
 pub struct PopupData<'a> {
-    pub labels: &'a [&'a str],
-    pub help_texts: &'a [&'a str],
-}
-impl<'a> PopupData<'a> {
-    pub fn new(labels: &'a [&'a str], help_texts: &'a [&'a str]) -> Self {
-        Self { labels, help_texts }
-    }
+    pub labels: &'a [&'a str],     // labels for fields
+    pub help_texts: &'a [&'a str], // Text for helpers
+    pub field_data: &'a [&'a str], // Text to fill in the fields
 }
 impl<'a> RenderableComponent<'a> for Popup {
     type ContextData = PopupData<'a>;
@@ -175,8 +173,8 @@ impl<'a> RenderableComponent<'a> for Popup {
         frame: &mut Frame,
         context: Option<super::super::RenderContext<'a, Self::ContextData>>,
     ) {
-        let [labels, helpers] = if let Some(RenderContext(data)) = context {
-            [data.labels, data.help_texts]
+        let [labels, helpers, field_data] = if let Some(RenderContext(data)) = context {
+            [data.labels, data.help_texts, data.field_data]
         } else {
             return;
         };
@@ -198,7 +196,12 @@ impl<'a> RenderableComponent<'a> for Popup {
                 Constraint::Length(1), // help field 2
             ])
             .split(popup_area);
-        let label_input = Paragraph::new(state.form.field_content(0)).block(
+        let label_text = if state.form.field_content(0).len() == 0 {
+            field_data[0]
+        } else {
+            state.form.field_content(0)
+        };
+        let label_input = Paragraph::new(label_text).block(
             Block::bordered()
                 .border_style(if state.selected_field == 0 {
                     Style::new().yellow()
@@ -209,8 +212,12 @@ impl<'a> RenderableComponent<'a> for Popup {
         );
 
         Widget::render(label_input, popup_chunks[0], buf);
-
-        let tags_input = Paragraph::new(state.form.field_content(1)).block(
+        let tags_text = if state.form.field_content(1).len() == 0 {
+            field_data[1]
+        } else {
+            state.form.field_content(1)
+        };
+        let tags_input = Paragraph::new(tags_text).block(
             Block::bordered()
                 .border_style(if state.selected_field == 1 {
                     Style::new().yellow()
@@ -244,6 +251,20 @@ impl<'a> RenderableComponent<'a> for Popup {
             }
         };
         if let Some(popup) = self.selection_popup.as_mut() {
+            let tags_in_input: HashSet<&str> = tags_text.split(',').map(str::trim).collect();
+            let indices_to_select: Vec<usize> = popup
+                .items
+                .iter()
+                .enumerate()
+                .filter_map(|(i, s)| {
+                    if tags_in_input.contains(s.as_str()) {
+                        Some(i)
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            popup.add_indices_to_selection(&indices_to_select);
             popup.render(
                 area,
                 frame,
