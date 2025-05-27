@@ -41,6 +41,7 @@ pub fn view<B: NoteBackend>(model: &mut Model<B>, frame: &mut Frame) {
             Some(RenderContext(&PopupData {
                 labels: &["Label", "Tags"],
                 help_texts: &["<Tab>/<Shift-Tab> - cycle fields", "<Return> - submit"],
+                field_data: &["", ""],
             })),
         );
     }

@@ -15,7 +15,7 @@ use super::popup_area_length;
 pub struct SelectionPopup {
     pub selected_indices: HashSet<usize>,
     state: ListState,
-    items: Vec<String>,
+    pub items: Vec<String>,
 }
 
 impl SelectionPopup {

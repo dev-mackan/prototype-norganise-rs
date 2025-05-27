@@ -5,11 +5,11 @@ mod styles;
 mod text_area;
 
 pub use note_list::{NoteData, NoteList};
-pub use popups::{FormPopupState, InputCursor, Popup, PopupData, PopupType, SelectionPopupFields};
+pub use popups::{Popup, PopupData, PopupType, SelectionPopupFields};
 use ratatui::{layout::Rect, Frame};
 pub use text_area::TextArea;
 
-use super::forms::{EditNoteForm, Form, NewNoteForm, NoteSearchForm};
+use super::forms::Form;
 
 pub struct ViewComponents {
     pub note_list: NoteList,
