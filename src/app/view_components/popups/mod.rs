@@ -2,10 +2,8 @@ use ratatui::layout::{Constraint, Flex, Layout, Rect};
 
 use crate::app::forms::{Fields, InputForm};
 mod form_popup;
-mod input_form_popup;
 mod selection;
-pub use form_popup::{render_two_field_popup, Popup, PopupData};
-pub use input_form_popup::InputFormPopup;
+pub use form_popup::{Popup, PopupData};
 
 pub trait FormPopup<T>
 where

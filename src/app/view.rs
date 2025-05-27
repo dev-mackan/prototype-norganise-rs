@@ -7,8 +7,7 @@ use ratatui::{
 use super::{
     model::Model,
     view_components::{
-        render_two_field_popup, InteractiveList, NoteData, PopupData, PopupType, RenderContext,
-        RenderableComponent,
+        InteractiveList, NoteData, PopupData, PopupType, RenderContext, RenderableComponent,
     },
 };
 
@@ -36,7 +35,6 @@ pub fn view<B: NoteBackend>(model: &mut Model<B>, frame: &mut Frame) {
     // Popups
     if let Some(popup) = model.views.popup.as_mut() {
         //NOTE: Match popup.popup_type if specific behaviour is needed for a popup type
-        //render_two_field_popup(popup, main_area, frame, ["Label", "Tags"], ["", ""])
         popup.render(
             main_area,
             frame,
