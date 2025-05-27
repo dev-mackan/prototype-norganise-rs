@@ -6,7 +6,7 @@ use std::{
 
 use serde_json::Value;
 
-use crate::UnsavedNote;
+use crate::{NoteBlob, UnsavedNote, BACKEND_VERSION};
 
 use super::{Note, NoteBackend};
 
@@ -25,11 +25,11 @@ impl JsonBackend {
 impl NoteBackend for JsonBackend {
     fn retrieve_notes(&self) -> anyhow::Result<Vec<Note>> {
         let json_value = read_json_value(&self.json_path).unwrap();
-
-        let _version = json_value["version"].as_u64().unwrap();
-        let notes: Vec<Note> = serde_json::from_value(json_value["notes"].clone())?;
-
-        Ok(notes)
+        let blob: NoteBlob = serde_json::from_value(json_value)?;
+        if blob.version != BACKEND_VERSION {
+            panic!("")
+        }
+        Ok(blob.notes)
     }
     fn add_note(&self, note: UnsavedNote) -> anyhow::Result<()> {
         let mut json_value = read_json_value(&self.json_path)?;

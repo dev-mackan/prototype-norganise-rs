@@ -6,11 +6,18 @@ mod tests;
 pub use json::JsonBackend;
 use serde::{Deserialize, Serialize};
 
+pub const BACKEND_VERSION: usize = 1;
 pub trait NoteBackend {
     fn retrieve_notes(&self) -> anyhow::Result<Vec<Note>>;
     fn add_note(&self, note: UnsavedNote) -> anyhow::Result<()>;
     fn delete_note(&self, target_id: usize) -> anyhow::Result<()>;
     fn update_note(&self, note: &Note) -> anyhow::Result<()>;
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NoteBlob {
+    pub version: usize,
+    pub notes: Vec<Note>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
