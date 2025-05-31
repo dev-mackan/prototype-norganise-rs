@@ -7,6 +7,7 @@ use super::{
     searching::fzf_search,
     view_components::{InteractiveList, Popup, PopupType, SelectionPopupFields, ViewComponents},
 };
+use log::{error, info};
 use norganisers_lib::{JsonBackend, NoteBackend};
 use ratatui::{prelude::Backend, Terminal};
 
@@ -291,7 +292,7 @@ pub fn update<B: NoteBackend>(
         Message::PrevSortMode => {
             model.note_store.prev_sort_mode();
         }
-        Message::Error(e) => eprintln!("{}", e),
+        Message::Error(e) => error!("{}", e),
     }
     None
 }

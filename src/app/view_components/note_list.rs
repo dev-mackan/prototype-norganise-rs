@@ -70,7 +70,7 @@ impl<'a> RenderableComponent<'a> for NoteList {
 
                 let max_width = area.width as usize;
                 // LABEL
-                let mut label = note.label.clone();
+                let mut label = format!("{}:{}", note.id, note.label.clone());
                 if label.len() > max_width - 5 {
                     let mut truncated = String::with_capacity(max_width - 5);
                     let mut current = 0;

@@ -1,7 +1,6 @@
-use std::{io::stdout, panic};
-
 use anyhow::Result;
 use app::AppConfig;
+use log::info;
 use ratatui::{
     crossterm::{
         terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
@@ -10,11 +9,14 @@ use ratatui::{
     prelude::{Backend, CrosstermBackend},
     Terminal,
 };
+use std::{io::stdout, panic};
 mod app;
+mod args;
 
 pub const APP_VERSION: usize = 1;
 
 fn main() -> Result<()> {
+    args::parse();
     install_panic_hook();
     let mut terminal = init_terminal()?;
     let config = AppConfig::load()?;

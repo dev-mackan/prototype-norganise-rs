@@ -4,6 +4,7 @@ use std::{
     process::{Command, Stdio},
 };
 
+use log::info;
 use norganisers_lib::Note;
 
 // Fuzzy searches a Vec<Note> (label and text), returns a set of matched ids
@@ -73,6 +74,7 @@ where
 
     let output = child.wait_with_output()?;
     let matched_output = String::from_utf8_lossy(&output.stdout);
+    info!("Searched term: {} | Output: {:?}", filter, matched_output);
 
     let matched_ids: HashSet<usize> = matched_output
         .lines()

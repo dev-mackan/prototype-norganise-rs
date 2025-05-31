@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use log::info;
 use norganisers_lib::Note;
 
 pub struct NoteStore {
@@ -26,50 +27,29 @@ impl NoteStore {
         }
     }
     pub fn update_filter(&mut self, set: HashSet<usize>) {
-        self.matched_note_indices = Some(set)
+        self.matched_note_indices = Some(set);
+        info!("{:?}", self.matched_note_indices);
     }
     pub fn update_notes(&mut self, notes: Vec<Note>) {
         let unique_tags: HashSet<String> = notes
             .iter()
             .flat_map(|note| note.tags.iter().cloned())
             .collect();
+        self.matched_note_indices = None;
         self.tags = unique_tags.into_iter().collect();
         self.notes = notes;
     }
     // Applies filtering(if needed) and return notes
     pub fn get_notes(&self) -> Vec<&Note> {
-        let mut notes: Vec<&Note> = if let Some(matched) = &self.matched_note_indices {
-            self.notes
-                .iter()
-                .enumerate()
-                .filter_map(|(i, note)| {
-                    if matched.contains(&i) {
-                        Some(note)
-                    } else {
-                        None
-                    }
-                })
-                .collect()
-        } else {
-            self.notes.iter().map(|note| note).collect()
-        };
-        match self.sort_mode {
-            NoteSortMode::AscCreated => {
-                notes.sort_by_key(|note| note.created_at);
-            }
-            NoteSortMode::DesCreated => {
-                notes.sort_by_key(|note| std::cmp::Reverse(note.created_at));
-            }
-            NoteSortMode::LabelAsc => {
-                notes.sort_by_key(|note| &note.label);
-            }
-            NoteSortMode::LabelDesc => {
-                notes.sort_by_key(|note| std::cmp::Reverse(&note.label));
-            }
-            NoteSortMode::None => {}
-        }
+        let notes: Vec<&Note> = self
+            .get_matched_note_indices_sorted()
+            .iter()
+            .filter_map(|i| self.notes.get(*i))
+            .collect();
         notes
     }
+    // Returns the indices of the notes that should be shown. The indices are sorted according to
+    // the selected sorting mode. If no search has been performed, all indices are returned.
     fn get_matched_note_indices_sorted(&self) -> Vec<usize> {
         let indices: Vec<usize> = if let Some(matched) = &self.matched_note_indices {
             matched.iter().cloned().collect()
