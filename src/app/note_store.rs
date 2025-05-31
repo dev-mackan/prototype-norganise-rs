@@ -27,8 +27,19 @@ impl NoteStore {
         }
     }
     pub fn update_filter(&mut self, set: HashSet<usize>) {
-        self.matched_note_indices = Some(set);
-        info!("{:?}", self.matched_note_indices);
+        self.matched_note_indices = Some(
+            self.notes
+                .iter()
+                .enumerate()
+                .filter_map(|(i, note)| {
+                    if set.contains(&note.id) {
+                        Some(i)
+                    } else {
+                        None
+                    }
+                })
+                .collect(),
+        );
     }
     pub fn update_notes(&mut self, notes: Vec<Note>) {
         let unique_tags: HashSet<String> = notes
