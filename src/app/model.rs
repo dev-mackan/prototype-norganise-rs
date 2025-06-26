@@ -72,7 +72,9 @@ pub fn update<B: NoteBackend>(
         }
         Message::EditNote => {
             if let Some(selected) = model.views.note_list.selected_selection() {
+                info!("Selected note index: {}", format!("{}", selected));
                 if let Some(note) = model.note_store.get_note_as_mut(selected) {
+                    info!("Selected note {}", format!("{:?}", note));
                     if let Ok(text) = NvimEditor::open_temp_file(&note.text) {
                         note.text = text;
                         match terminal.clear() {
@@ -187,6 +189,7 @@ pub fn update<B: NoteBackend>(
         Message::RetrieveNotes => match model.backend.retrieve_notes() {
             Ok(notes) => {
                 model.note_store.update_notes(notes);
+                model.views.note_list.reset_selection();
             }
             Err(e) => panic!("{}", e),
         },
@@ -199,7 +202,10 @@ pub fn update<B: NoteBackend>(
                         &form.field_content(0),
                         &form.field_content(1),
                     ) {
-                        Ok(matched) => model.note_store.update_filter(matched),
+                        Ok(matched) => {
+                            model.note_store.update_filter(matched);
+                            model.views.note_list.reset_selection();
+                        }
                         Err(e) => panic!("{}", e),
                     }
                 } else {

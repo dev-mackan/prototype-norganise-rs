@@ -86,9 +86,11 @@ impl NoteStore {
         self.get_notes().get(index).map(|note| *note)
     }
     pub fn get_note_as_mut(&mut self, index: usize) -> Option<&mut Note> {
+        // The provided index argument is the index as seen in the UI list
+        // indices is a sparse list of indices (filtered) of the notes that should be rendered
         let indices = &self.get_matched_note_indices_sorted();
-        if indices.contains(&index) {
-            self.notes.get_mut(index)
+        if let Some(note_index) = indices.get(index) {
+            self.notes.get_mut(*note_index)
         } else {
             None
         }
