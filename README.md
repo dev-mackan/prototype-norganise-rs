@@ -6,15 +6,17 @@ The application is only tested on Linux.
 
 Try the application using `cargo run`
 
-**Dependencies**
+#### Dependencies
 
 The application uses `fzf` to perform fuzzy searching.
 `Neovim` is the editor used to open and edit the contents of notes.
 
+#### Configuration
+
 The configuration and storage files are created in `~/.config/norganise-rs/`.
 The path for the storage json can be changed by editing the `data_file_path` value in `config.json`.
 
-**Keybindings**
+#### Keybindings
 
 |Description|Key|
 |-------------|---|
