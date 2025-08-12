@@ -77,6 +77,10 @@ pub fn update<B: NoteBackend>(
                     info!("Selected note {}", format!("{:?}", note));
                     if let Ok(text) = NvimEditor::open_temp_file(&note.text) {
                         note.text = text;
+                        match model.backend.update_note(note) {
+                            Ok(()) => {}
+                            Err(e) => return Some(Message::Error(anyhow::anyhow!(e))),
+                        }
                         match terminal.clear() {
                             Ok(()) => return Some(Message::ClearScreen),
                             Err(e) => return Some(Message::Error(anyhow::anyhow!(e))),
