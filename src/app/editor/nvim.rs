@@ -15,7 +15,7 @@ impl TextEditor for NvimEditor {
         stdout().execute(LeaveAlternateScreen)?;
         disable_raw_mode()?;
 
-        let mut tmp_file = NamedTempFile::new()?;
+        let mut tmp_file = NamedTempFile::with_suffix(".md")?;
         write!(tmp_file, "{}", text)?;
         let path = tmp_file.path().to_owned();
         let status = Command::new("nvim").arg(&path).status()?;
