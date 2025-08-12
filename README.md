@@ -7,6 +7,7 @@ The application is only tested on Linux.
 **Dependencies**
 
 The application uses `fzf` to perform fuzzy searching.
+`Neovim` is the editor used to open and edit the contents of notes.
 
 Try the application using `cargo run`
 
